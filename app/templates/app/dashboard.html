@@ -1,0 +1,85 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+<!-- For messages  -->
+{% block msg%}
+{% if messages %}
+{% for message in messages %}
+<div {%if message.tags%} class="alert alert-{{message.tags}} mb-5" role="alert" {% endif %}>
+    <strong>{{message}}</strong>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock msg%}
+
+
+
+
+
+
+<!-- For Content  -->
+
+
+{% block content %}
+
+
+<div class="col-sm-10">
+    <h3 class="my-4 text-white">Dashboard</h3>
+    <div class="text-white">
+        <h6>Name-{{fullname}}</h6>
+        {% for group in groups %}
+        <p>{{group.name}}</p>
+        {% endfor %}
+    
+    
+    </div>
+    {% if perms.app.add_blogpost %}
+    <a href="{% url 'addblog' %}" class="btn btn-success">Add Post</a>
+    {% endif %}
+    <h4 class="text-center alert alert-info mt-3">Show Post Information</h4>
+    
+    {% if blogs %}
+    <table class="table table-hover bg-white">
+        <thead>
+            <tr class="text-center">
+                <th scope="col" style="width:2%">ID</th>
+                <th scope="col" style="width:28%">Title</th>
+                <th scope="col" style="width:55%">Description</th>
+                <th scope="col" style="width:15%">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for blog in blogs %}
+            <tr>
+                <th scope="row">{{blog.id}}</th>
+                <td>{{blog.title}}</td>
+                <td>{{blog.desc}}</td>
+                <td class="text-center">
+                    {% if perms.app.change_blogpost %}
+                    <a  class="btn btn-warning btn-sm" href="{% url 'updateblog' blog.id %}">Edit</a>
+                    {% endif %}
+
+                    {% if perms.app.delete_blogpost %}
+                    <form action="{% url 'delete' blog.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-danger btn-sm" href="{% url 'delete' blog.id %}"  value="Delete">
+                    </form>
+                    {% endif %}
+                </td>
+                <!--  -->
+                <!--  -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h4 class="text-center alert alert-warning">No Blogs to show</h4>
+</div>
+
+{% endif %}
+
+
+
+</div>
+
+{% endblock content %}
